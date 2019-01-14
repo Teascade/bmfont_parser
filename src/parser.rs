@@ -1,5 +1,4 @@
-use std::error::Error;
-use std::fmt;
+use std::str::FromStr;
 
 #[derive(Clone)]
 pub(crate) struct Parser {
@@ -8,7 +7,7 @@ pub(crate) struct Parser {
 }
 
 impl Parser {
-    pub fn new(text: String) -> Parser {
+    pub fn new(text: &str) -> Parser {
         Parser {
             chars: text.chars().collect(),
             cursor: 0,
@@ -28,12 +27,16 @@ impl Parser {
         Expect::new().or(text, self)
     }
 
-    pub fn expect_number(&mut self) -> Result<u32, String> {
+    pub fn expect_number<T: FromStr>(&mut self) -> Result<T, String> {
         let mut text = String::new();
         let mut got_number = Err("No number found".to_owned());
         while let Some(c) = self.peek(0) {
             text += &c.to_string();
-            let number = text.parse::<u32>();
+            if c == '-' && text.len() == 1 {
+                self.move_cursor(1);
+                continue;
+            }
+            let number = text.parse::<T>();
             match number {
                 Ok(num) => {
                     got_number = Ok(num);
@@ -50,10 +53,7 @@ impl Parser {
         let mut got_ident = Err("No ident found".to_owned());
 
         let res = self.expect("\"").get();
-        let within_quotations = match res {
-            Ok(_) => true,
-            Err(_) => false,
-        };
+        let within_quotations = res.is_ok();
 
         while let Some(c) = self.peek(0) {
             if (!within_quotations && !Parser::is_whitespace(c)) || (within_quotations && c != '\"')
