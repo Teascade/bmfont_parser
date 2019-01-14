@@ -1,7 +1,7 @@
 mod bmfont;
 mod bmcharacter;
 
-use super::BMFont;
+use crate::BMFont;
 
 pub fn from_path_setup() -> BMFont {
     match BMFont::from_path("examples/fonts/iosevka.sfl") {

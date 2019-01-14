@@ -1,6 +1,4 @@
-extern crate sfl_parser;
-
-use sfl_parser::BMFont;
+use bmfont_parser::BMFont;
 
 fn main() {
     let bmfont = match BMFont::from_path("examples/fonts/iosevka.sfl") {

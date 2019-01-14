@@ -1,6 +1,4 @@
-extern crate sfl_parser;
-
-use sfl_parser::BMFont;
+use bmfont_parser::BMFont;
 
 static IOSEVKA_SFL: &'static str = include_str!("fonts/iosevka.sfl");
 

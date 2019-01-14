@@ -1,12 +1,10 @@
-# sfl_parser
+# bmfont_parser
 
 [![Build Status](https://travis-ci.org/Teascade/sfl_parser.svg?branch=1.3.0)](https://travis-ci.org/Teascade/sfl_parser)
 [![Docs](https://docs.rs/sfl_parser/badge.svg)](https://docs.rs/sfl_parser)
 [![Crates.io](https://img.shields.io/crates/v/sfl_parser.svg)](https://crates.io/crates/sfl_parser)
 
-## sfl_parser has permanently moved to [`bmfont_parser`](https://github.com/teascade/bmfont_parser), as the name has grown inaccurate to the functionality of this crate
-
-A lightweight and easy-to-use .sfl file (bitmap font) parser made with Rust.
+A lightweight and easy-to-use .sfl and .fnt file (bitmap font) parser made with Rust.
 
 ### How to use
 Documentation at [docs.rs][docs] or simply:
@@ -14,15 +12,15 @@ Documentation at [docs.rs][docs] or simply:
 1. Add the following to your dependencies:  
    ```toml
    [dependencies]
-   sfl_parser="1.3"
+   bmfont_parser="1.3"
    ```
 2. To your Rust project add the following line:
    ```rust
-   extern crate sfl_parser;
+   extern crate bmfont_parser;
    ```
 3. You're done! Here is an example of how to use it:
    ```rust
-    use sfl_parser::BMFont;
+    use bmfont_parser::BMFont;
 
     let bmfont = match BMFont::from_path("examples/fonts/iosevka.sfl") {
         Ok(bmfont) => bmfont,
@@ -47,4 +45,4 @@ Documentation at [docs.rs][docs] or simply:
 This crate is distributed under the terms of [the MIT License][license].
 
 [license]: LICENSE.md
-[docs]: https://docs.rs/sfl_parser
+[docs]: https://docs.rs/bmfont_parser
