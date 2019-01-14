@@ -1,8 +1,8 @@
 # bmfont_parser
 
-[![Build Status](https://travis-ci.org/Teascade/sfl_parser.svg?branch=1.3.0)](https://travis-ci.org/Teascade/sfl_parser)
-[![Docs](https://docs.rs/sfl_parser/badge.svg)](https://docs.rs/sfl_parser)
-[![Crates.io](https://img.shields.io/crates/v/sfl_parser.svg)](https://crates.io/crates/sfl_parser)
+[![Build Status](https://travis-ci.org/Teascade/bmfont_parser.svg?branch=1.0.0)](https://travis-ci.org/Teascade/sfl_parser)
+[![Docs](https://docs.rs/bmfont_parser/badge.svg)](https://docs.rs/bmfont_parser)
+[![Crates.io](https://img.shields.io/crates/v/bmfont_parser.svg)](https://crates.io/crates/bmfont_parser)
 
 A lightweight and easy-to-use .sfl and .fnt file (bitmap font) parser made with Rust.
 
