@@ -1,7 +1,7 @@
 use super::{from_loaded_setup, from_path_setup};
 
 #[test]
-fn test_character_id() {
+fn id() {
     let bmfont = from_path_setup();
     assert_eq!(bmfont.chars[&65].id, 65);
     let bmfont = from_loaded_setup();
@@ -9,17 +9,17 @@ fn test_character_id() {
 }
 
 #[test]
-fn test_character_coordinates() {
+fn coordinates() {
     let bmfont = from_path_setup();
-    assert_eq!(bmfont.chars[&65].x, 77);
-    assert_eq!(bmfont.chars[&65].y, 168);
+    assert_eq!(bmfont.chars[&65].x, 172);
+    assert_eq!(bmfont.chars[&65].y, 244);
     let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.chars[&65].x, 77);
-    assert_eq!(bmfont.chars[&65].y, 168);
+    assert_eq!(bmfont.chars[&65].x, 172);
+    assert_eq!(bmfont.chars[&65].y, 244);
 }
 
 #[test]
-fn test_character_size() {
+fn size() {
     let bmfont = from_path_setup();
     assert_eq!(bmfont.chars[&65].width, 18);
     assert_eq!(bmfont.chars[&65].height, 33);
@@ -29,7 +29,7 @@ fn test_character_size() {
 }
 
 #[test]
-fn test_character_offsets() {
+fn offsets() {
     let bmfont = from_path_setup();
     assert_eq!(bmfont.chars[&65].xoffset, 2);
     assert_eq!(bmfont.chars[&65].yoffset, 23);
@@ -39,7 +39,7 @@ fn test_character_offsets() {
 }
 
 #[test]
-fn test_character_xadvance() {
+fn xadvance() {
     let bmfont = from_path_setup();
     assert_eq!(bmfont.chars[&65].xadvance, 22);
     let bmfont = from_loaded_setup();
