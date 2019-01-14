@@ -14,9 +14,9 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
     let font_name = result_or(parser.expect_ident(), "Could not parse font name")?;
 
     parser.skip_whitespace();
-    let line_height = result_or(parser.expect_number(), "Could not parse font height")?;
-    parser.skip_whitespace();
     let size = result_or(parser.expect_number(), "Could not parse font size")?;
+    parser.skip_whitespace();
+    let line_height = result_or(parser.expect_number(), "Could not parse font height")?;
 
     parser.skip_whitespace();
     let image_name = result_or(parser.expect_ident(), "Could not parse image path")?;
