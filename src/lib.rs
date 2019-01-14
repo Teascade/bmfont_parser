@@ -4,7 +4,7 @@
 //! ```
 //! use bmfont_parser::{BMFont, Format};
 //!
-//! let bmfont = match BMFont::from_path(Format::SFL, "examples/fonts/iosevka.sfl") {
+//! let bmfont = match BMFont::from_path(&Format::SFL, "examples/fonts/iosevka.sfl") {
 //!     Ok(bmfont) => bmfont,
 //!     Err(_) => panic!("Failed to load iosevka.sfl"),
 //! };
@@ -91,21 +91,24 @@ impl BMFont {
     /// ```
     /// use bmfont_parser::{BMFont, Format};
     ///
-    /// let bmfont = match BMFont::from_path(Format::SFL, "examples/fonts/iosevka.sfl") {
+    /// let bmfont = match BMFont::from_path(&Format::SFL, "examples/fonts/iosevka.sfl") {
     ///     Ok(bmfont) => bmfont,
     ///     Err(_) => panic!("Failed to load iosevka.sfl"),
     /// };
     ///
     /// println!("bmfont: {}", bmfont);
     /// ```
-    pub fn from_path<T: Into<PathBuf>>(format: Format, path: T) -> Result<BMFont, Error> {
+    pub fn from_path<T: Into<PathBuf>>(format: &Format, path: T) -> Result<BMFont, Error> {
         let path = path.into();
         let mut file = File::open(&path)?;
 
         let mut buffer = String::new();
         file.read_to_string(&mut buffer)?;
 
-        let mut bmfont = sfl_parser::load_sfl(buffer)?;
+        let mut bmfont = match format {
+            Format::SFL => sfl_parser::load_sfl(buffer)?,
+            Format::BMFont => return err("BMFont not implemented"),
+        };
 
         if let Some(path) = path.parent() {
             let mut image_path = path.to_path_buf();
@@ -126,7 +129,7 @@ impl BMFont {
     ///
     /// let iosevka_sfl = include_str!("../examples/fonts/iosevka.sfl");
     ///
-    /// let bmfont = match BMFont::from_loaded(Format::SFL, iosevka_sfl, "examples/fonts/iosevka.png") {
+    /// let bmfont = match BMFont::from_loaded(&Format::SFL, iosevka_sfl, "examples/fonts/iosevka.png") {
     ///     Ok(bmfont) => bmfont,
     ///     Err(_) => panic!("Failed to load iosevka.sfl"),
     /// };
@@ -134,11 +137,14 @@ impl BMFont {
     /// println!("bmfont: {}", bmfont);
     /// ```
     pub fn from_loaded<T: Into<String>>(
-        format: Format,
+        format: &Format,
         sfl_contents: T,
         image_path: T,
     ) -> Result<BMFont, Error> {
-        let mut bmfont = sfl_parser::load_sfl(sfl_contents)?;
+        let mut bmfont = match format {
+            Format::SFL => sfl_parser::load_sfl(sfl_contents)?,
+            Format::BMFont => return err("BMFont not implemented"),
+        };
 
         let mut pathbuf = PathBuf::new();
         pathbuf.push(image_path.into());
