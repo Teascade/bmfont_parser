@@ -18,6 +18,7 @@
 #[cfg(test)]
 mod tests;
 
+mod bmfont_parser;
 mod parser;
 mod sfl_parser;
 
@@ -60,7 +61,7 @@ pub struct BMCharacter {
     /// The texture page where the character is found
     pub page: u32,
     /// The texture channel where the character is found
-    pub chnl: u32,
+    pub channel: u32,
 }
 
 /// Some details from the info block
@@ -91,8 +92,6 @@ pub struct InfoDetails {
 /// Some details from the common block
 #[derive(Debug, Clone)]
 pub struct CommonDetails {
-    /// Number of pixels from the absolute top of the line to the base.
-    pub base: u32,
     /// Width of the texture
     pub scale_w: u32,
     /// Height of the texture
@@ -141,6 +140,8 @@ pub struct BMFont {
     // Common
     /// Line height of the font.
     pub line_height: u32,
+    /// Number of pixels from the absolute top of the line to the base.
+    pub base: u32,
     /// Some details from the Common-block that are not available in all parsing methods
     pub common_details: Option<CommonDetails>,
 
@@ -191,8 +192,8 @@ impl BMFont {
         file.read_to_string(&mut buffer)?;
 
         let mut bmfont = match format {
-            Format::SFL => sfl_parser::load_sfl(buffer)?,
-            Format::BMFont => return err("BMFont not implemented"),
+            Format::SFL => sfl_parser::load(buffer)?,
+            Format::BMFont => bmfont_parser::load(buffer)?,
         };
 
         if let Some(path) = path.parent() {
@@ -225,12 +226,12 @@ impl BMFont {
     /// ```
     pub fn from_loaded<T: Into<String>>(
         format: &Format,
-        sfl_contents: T,
+        contents: T,
         image_path: &[&str],
     ) -> Result<BMFont, Error> {
         let mut bmfont = match format {
-            Format::SFL => sfl_parser::load_sfl(sfl_contents)?,
-            Format::BMFont => return err("BMFont not implemented"),
+            Format::SFL => sfl_parser::load(contents)?,
+            Format::BMFont => bmfont_parser::load(contents)?,
         };
 
         for (idx, page) in bmfont.pages.iter_mut().enumerate() {

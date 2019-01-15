@@ -7,7 +7,7 @@ use std::io::Error;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
+pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
     let content = sfl_contents.into();
     let mut parser = Parser::new(&content);
 
@@ -50,9 +50,20 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
                 yoffset,
                 xadvance,
                 page: 0,
-                chnl: 15,
+                channel: 15,
             },
         );
+    }
+
+    let mut min_y = 100_000;
+    for (_, ch) in chars.iter() {
+        if min_y > ch.yoffset {
+            min_y = ch.yoffset;
+        }
+    }
+    let base = line_height - min_y as u32;
+    for (_, ch) in chars.iter_mut() {
+        ch.yoffset -= min_y;
     }
 
     parser.skip_whitespace();
@@ -69,6 +80,7 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
             size,
             info_details: None,
             line_height,
+            base,
             common_details: None,
             pages: vec![Page {
                 id: 0,

@@ -63,6 +63,7 @@ impl Parser {
                 got_ident = Ok(text.clone());
             } else if within_quotations && c == '\"' {
                 self.move_cursor(1);
+                got_ident = Ok(text.clone());
                 break;
             } else {
                 break;
@@ -83,6 +84,19 @@ impl Parser {
 
     pub fn is_finished(&self) -> bool {
         self.cursor == self.chars.len()
+    }
+
+    pub fn print_surroundings(&self) {
+        println!("Cursor currently at: {}", self.cursor);
+        let mut text = String::new();
+        for i in 0..30 {
+            if let Some(c) = self.peek(i) {
+                text += &c.to_string();
+            } else {
+                break;
+            }
+        }
+        println!("Next 30 characters, or less: \"{}\"", text);
     }
 
     fn move_cursor(&mut self, amount: usize) {
@@ -118,6 +132,9 @@ impl Expect {
                         self.previous_expects.push(expected);
                         return self;
                     }
+                } else {
+                    self.previous_expects.push(expected);
+                    return self;
                 }
             }
             parser.move_cursor(expected.chars().count());

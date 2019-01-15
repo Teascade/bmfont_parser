@@ -1,56 +1,54 @@
-use super::{from_loaded_setup, from_path_setup};
+use super::for_each_font;
 use std::path::PathBuf;
 
 #[test]
 fn name() {
-    let bmfont = from_path_setup();
-    assert_eq!(bmfont.font_name, "Iosevka");
-    let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.font_name, "Iosevka");
+    for_each_font(|font| {
+        assert_eq!(font.font_name, "Iosevka");
+    });
+}
+
+#[test]
+fn base() {
+    for_each_font(|font| {
+        assert_eq!(font.base, 44);
+    });
 }
 
 #[test]
 fn line_height() {
-    let bmfont = from_path_setup();
-    assert_eq!(bmfont.line_height, 56);
-    let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.line_height, 56);
+    for_each_font(|font| {
+        assert_eq!(font.line_height, 56);
+    });
 }
 
 #[test]
 fn size() {
-    let bmfont = from_path_setup();
-    assert_eq!(bmfont.size, 32);
-    let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.size, 32);
+    for_each_font(|font| {
+        assert_eq!(font.size, 32);
+    });
 }
 
 #[test]
 fn image_path() {
-    let bmfont = from_path_setup();
-    assert_eq!(
-        bmfont.pages[0].image_path,
-        PathBuf::from("examples/fonts/iosevka.png")
-    );
-    let bmfont = from_loaded_setup();
-    assert_eq!(
-        bmfont.pages[0].image_path,
-        PathBuf::from("examples/fonts/iosevka.png")
-    );
+    for_each_font(|font| {
+        assert_eq!(
+            font.pages[0].image_path,
+            PathBuf::from("examples/fonts/iosevka.png")
+        );
+    });
 }
 
 #[test]
 fn character_amount() {
-    let bmfont = from_path_setup();
-    assert_eq!(bmfont.chars.len(), 486);
-    let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.chars.len(), 486);
+    for_each_font(|font| {
+        assert_eq!(font.chars.len(), 486);
+    });
 }
 
 #[test]
 fn sfl_page_amount() {
-    let bmfont = from_path_setup();
-    assert_eq!(bmfont.pages.len(), 1);
-    let bmfont = from_loaded_setup();
-    assert_eq!(bmfont.pages.len(), 1);
+    for_each_font(|font| {
+        assert_eq!(font.pages.len(), 1);
+    });
 }
