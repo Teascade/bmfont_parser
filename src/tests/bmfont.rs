@@ -29,12 +29,12 @@ fn size() {
 fn image_path() {
     let bmfont = from_path_setup();
     assert_eq!(
-        bmfont.image_path,
+        bmfont.pages[0].image_path,
         PathBuf::from("examples/fonts/iosevka.png")
     );
     let bmfont = from_loaded_setup();
     assert_eq!(
-        bmfont.image_path,
+        bmfont.pages[0].image_path,
         PathBuf::from("examples/fonts/iosevka.png")
     );
 }
@@ -45,4 +45,12 @@ fn character_amount() {
     assert_eq!(bmfont.chars.len(), 486);
     let bmfont = from_loaded_setup();
     assert_eq!(bmfont.chars.len(), 486);
+}
+
+#[test]
+fn sfl_page_amount() {
+    let bmfont = from_path_setup();
+    assert_eq!(bmfont.pages.len(), 1);
+    let bmfont = from_loaded_setup();
+    assert_eq!(bmfont.pages.len(), 1);
 }

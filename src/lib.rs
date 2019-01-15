@@ -39,41 +39,126 @@ pub(crate) fn result_or<T: Into<String>, U, N>(res: Result<U, N>, text: T) -> Re
 }
 
 /// Represents a single character in the bitmap font atlas. Contains coordinates, sizes, offsets and advances (everything required to render letters from the atlas).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BMCharacter {
     /// char id of the character.
-    pub id: i32,
+    pub id: u32,
     /// x-position of the character on the atlas.
-    pub x: i32,
+    pub x: u32,
     /// y-position of the character on the atlas.
-    pub y: i32,
+    pub y: u32,
     /// Width of the character on the atlas.
-    pub width: i32,
+    pub width: u32,
     /// Height of the character.
-    pub height: i32,
+    pub height: u32,
     /// x-offset of the character.
     pub xoffset: i32,
     /// y-offset of the character.
     pub yoffset: i32,
     /// x-advance of the character.
     pub xadvance: i32,
+    /// The texture page where the character is found
+    pub page: u32,
+    /// The texture channel where the character is found
+    pub chnl: u32,
+}
+
+/// Some details from the info block
+#[derive(Debug, Clone)]
+pub struct InfoDetails {
+    /// Is the font bold
+    pub bold: u32,
+    /// Is the font italic
+    pub italic: u32,
+    /// OEM charset name
+    pub charset: String,
+    /// Is the font unicode
+    pub unicode: u32,
+    /// height-stretch of the font
+    pub stretch_h: u32,
+    /// 1 if smoothing was turned on
+    pub smooth: u32,
+    /// Supersampling level used. 1 means no supersampling
+    pub aa: u32,
+    /// Padding for each character [up, right, down, left]
+    pub padding: [u32; 4],
+    /// Spacing for each character [horizontal, vertical]
+    pub spacing: [u32; 2],
+    /// Outline thickness
+    pub outline: u32,
+}
+
+/// Some details from the common block
+#[derive(Debug, Clone)]
+pub struct CommonDetails {
+    /// Number of pixels from the absolute top of the line to the base.
+    pub base: u32,
+    /// Width of the texture
+    pub scale_w: u32,
+    /// Height of the texture
+    pub scale_h: u32,
+    /// The amount of pages in this font
+    pub pages_count: u32,
+    /// 1 if the monochrome characters have been packed into each texture channel
+    pub packed: u32,
+    /// 0 = holds glyph data  
+    /// 1 = holds outline data  
+    /// 2 = holds glyph & outline data  
+    /// 3 = set to zero  
+    /// 4 = set to one
+    pub alpha_channel: u32,
+    /// 0 = holds glyph data  
+    /// 1 = holds outline data  
+    /// 2 = holds glyph & outline data  
+    /// 3 = set to zero  
+    /// 4 = set to one
+    pub red_channel: u32,
+    /// 0 = holds glyph data  
+    /// 1 = holds outline data  
+    /// 2 = holds glyph & outline data  
+    /// 3 = set to zero  
+    /// 4 = set to one
+    pub green_channel: u32,
+    /// 0 = holds glyph data  
+    /// 1 = holds outline data  
+    /// 2 = holds glyph & outline data  
+    /// 3 = set to zero  
+    /// 4 = set to one
+    pub blue_channel: u32,
 }
 
 /// Loaded and parsed struct of an .sfl file (a bitmap font file).
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BMFont {
+    // Info
     /// The name of the font.
     pub font_name: String,
-    /// The path of the image atlas for the font.
-    pub image_path: PathBuf,
+    /// Size of the font.
+    pub size: u32,
+    /// Some details from the Info-block that are not available in all parsing methods
+    pub info_details: Option<InfoDetails>,
+
+    // Common
+    /// Line height of the font.
+    pub line_height: u32,
+    /// Some details from the Common-block that are not available in all parsing methods
+    pub common_details: Option<CommonDetails>,
+
+    /// The pages of this font
+    pub pages: Vec<Page>,
     /// Hashmap of the characters in the font. <CharID, [`BMCharacter`][bmcharacter]>
     ///
     /// [bmcharacter]: struct.BMCharacter.html
     pub chars: HashMap<u32, BMCharacter>,
-    /// Line height of the font.
-    pub line_height: u32,
-    /// Size of the font.
-    pub size: u32,
+}
+
+/// The pages (or textures) of the BMFont
+#[derive(Debug, Clone)]
+pub struct Page {
+    /// The id of this page
+    pub id: u32,
+    /// The path of the image
+    pub image_path: PathBuf,
 }
 
 /// Specifies the type of file format which the font file uses.
@@ -111,9 +196,11 @@ impl BMFont {
         };
 
         if let Some(path) = path.parent() {
-            let mut image_path = path.to_path_buf();
-            image_path.push(bmfont.image_path);
-            bmfont.image_path = image_path;
+            for page in bmfont.pages.iter_mut() {
+                let mut image_path = (*path).to_path_buf();
+                image_path.push(page.image_path.clone());
+                page.image_path = image_path;
+            }
 
             Ok(bmfont)
         } else {
@@ -129,7 +216,7 @@ impl BMFont {
     ///
     /// let iosevka_sfl = include_str!("../examples/fonts/iosevka.sfl");
     ///
-    /// let bmfont = match BMFont::from_loaded(&Format::SFL, iosevka_sfl, "examples/fonts/iosevka.png") {
+    /// let bmfont = match BMFont::from_loaded(&Format::SFL, iosevka_sfl, &["examples/fonts/iosevka.png"]) {
     ///     Ok(bmfont) => bmfont,
     ///     Err(_) => panic!("Failed to load iosevka.sfl"),
     /// };
@@ -139,17 +226,24 @@ impl BMFont {
     pub fn from_loaded<T: Into<String>>(
         format: &Format,
         sfl_contents: T,
-        image_path: T,
+        image_path: &[&str],
     ) -> Result<BMFont, Error> {
         let mut bmfont = match format {
             Format::SFL => sfl_parser::load_sfl(sfl_contents)?,
             Format::BMFont => return err("BMFont not implemented"),
         };
 
-        let mut pathbuf = PathBuf::new();
-        pathbuf.push(image_path.into());
-
-        bmfont.image_path = pathbuf;
+        for (idx, page) in bmfont.pages.iter_mut().enumerate() {
+            let mut pathbuf = PathBuf::new();
+            let path;
+            if let Some(p) = image_path.get(idx) {
+                path = p;
+            } else {
+                return err("Wrong amount of image paths given to accompany each page");
+            };
+            pathbuf.push(path);
+            page.image_path = pathbuf;
+        }
 
         Ok(bmfont)
     }
@@ -159,12 +253,12 @@ impl Display for BMFont {
     fn fmt<'a>(&self, f: &mut Formatter<'a>) -> std::fmt::Result {
         write!(
             f,
-            "BMFont: {{ name: {}, image_path: {:?}, line_height: {}, size: {}, amount of characters: {} }}",
+            "BMFont: {{ name: {}, line_height: {}, size: {}, amount of characters: {}, pages: {:?} }}",
             self.font_name,
-            self.image_path,
             self.line_height,
             self.size,
-            self.chars.len()
+            self.chars.len(),
+            self.pages
         )
     }
 }

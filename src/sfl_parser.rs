@@ -1,10 +1,11 @@
 use crate::parser::Parser;
 use crate::{err, result_or};
-use crate::{BMCharacter, BMFont};
+use crate::{BMCharacter, BMFont, Page};
 
 use std::collections::HashMap;
 use std::io::Error;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
     let content = sfl_contents.into();
@@ -26,27 +27,19 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
     parser.skip_whitespace();
     let char_amount = result_or(parser.expect_number(), "Could not parse character amount")?;
 
-    let mut parse_charpart = |part: &str, id: i32| -> Result<i32, Error> {
-        parser.skip_whitespace();
-        result_or(
-            parser.expect_number(),
-            format!("Could not parse {} of char {}", part, id),
-        )
-    };
-
     let mut chars = HashMap::<u32, BMCharacter>::new();
     for idx in 0..char_amount {
-        let char_id = parse_charpart("character id", idx)?;
-        let x = parse_charpart("x", char_id)?;
-        let y = parse_charpart("y", char_id)?;
-        let width = parse_charpart("width", char_id)?;
-        let height = parse_charpart("height", char_id)?;
-        let xoffset = parse_charpart("xoffset", char_id)?;
-        let yoffset = parse_charpart("yoffset", char_id)?;
-        let xadvance = parse_charpart("xadvance", char_id)?;
+        let char_id = parse_charpart(&mut parser, "character id", idx)?;
+        let x = parse_charpart(&mut parser, "x", char_id)?;
+        let y = parse_charpart(&mut parser, "y", char_id)?;
+        let width = parse_charpart(&mut parser, "width", char_id)?;
+        let height = parse_charpart(&mut parser, "height", char_id)?;
+        let xoffset = parse_charpart(&mut parser, "xoffset", char_id)?;
+        let yoffset = parse_charpart(&mut parser, "yoffset", char_id)?;
+        let xadvance = parse_charpart(&mut parser, "xadvance", char_id)?;
 
         chars.insert(
-            char_id as u32,
+            char_id,
             BMCharacter {
                 id: char_id,
                 x,
@@ -56,6 +49,8 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
                 xoffset,
                 yoffset,
                 xadvance,
+                page: 0,
+                chnl: 15,
             },
         );
     }
@@ -71,10 +66,27 @@ pub(crate) fn load_sfl<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error
     } else {
         Ok(BMFont {
             font_name,
-            image_path,
-            chars,
-            line_height,
             size,
+            info_details: None,
+            line_height,
+            common_details: None,
+            pages: vec![Page {
+                id: 0,
+                image_path: image_path,
+            }],
+            chars,
         })
     }
+}
+
+pub(crate) fn parse_charpart<T: FromStr>(
+    parser: &mut Parser,
+    part: &str,
+    id: u32,
+) -> Result<T, Error> {
+    parser.skip_whitespace();
+    result_or(
+        parser.expect_number(),
+        format!("Could not parse {} of char {}", part, id),
+    )
 }
