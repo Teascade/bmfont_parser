@@ -9,16 +9,9 @@ fn name() {
 }
 
 #[test]
-fn base() {
-    for_each_font(|font| {
-        assert_eq!(font.base, 44);
-    });
-}
-
-#[test]
 fn line_height() {
     for_each_font(|font| {
-        assert_eq!(font.line_height, 56);
+        assert_eq!(font.line_height, 53);
     });
 }
 

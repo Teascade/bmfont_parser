@@ -10,16 +10,16 @@ fn id() {
 #[test]
 fn coordinates() {
     for_each_font(|font| {
-        assert_eq!(font.chars[&65].x, 172);
-        assert_eq!(font.chars[&65].y, 244);
+        assert_eq!(font.chars[&65].x, 799);
+        assert_eq!(font.chars[&65].y, 86);
     });
 }
 
 #[test]
 fn size() {
     for_each_font(|font| {
-        assert_eq!(font.chars[&65].width, 18);
-        assert_eq!(font.chars[&65].height, 33);
+        assert_eq!(font.chars[&65].width, 17);
+        assert_eq!(font.chars[&65].height, 31);
     });
 }
 
