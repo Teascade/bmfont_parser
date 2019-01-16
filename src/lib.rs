@@ -92,6 +92,8 @@ pub struct InfoDetails {
 /// Some details from the common block
 #[derive(Debug, Clone)]
 pub struct CommonDetails {
+    /// Number of pixels from the absolute top of the line to the base.
+    pub base: u32,
     /// Width of the texture
     pub scale_w: u32,
     /// Height of the texture
@@ -140,8 +142,6 @@ pub struct BMFont {
     // Common
     /// Line height of the font.
     pub line_height: u32,
-    /// Number of pixels from the absolute top of the line to the base.
-    pub base: u32,
     /// Some details from the Common-block that are not available in all parsing methods
     pub common_details: Option<CommonDetails>,
 

@@ -29,8 +29,8 @@ pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
     };
 
     let mut line_height = 0;
-    let mut base = 0;
     let mut com = CommonDetails {
+        base: 0,
         scale_w: 0,
         scale_h: 0,
         pages_count: 0,
@@ -191,7 +191,7 @@ pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
                 )?;
             }
             "base" => {
-                base = result_or(
+                com.base = result_or(
                     parser.expect_number(),
                     format!("Unable to parse common.{} value", keyword),
                 )?;
@@ -416,7 +416,6 @@ pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
             size,
             info_details: Some(det),
             line_height,
-            base,
             common_details: Some(com),
             pages: pages,
             chars,
