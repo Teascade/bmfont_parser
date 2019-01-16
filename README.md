@@ -1,6 +1,6 @@
 # bmfont_parser
 
-[![Build Status](https://travis-ci.org/Teascade/bmfont_parser.svg?branch=0.1.0)](https://travis-ci.org/Teascade/sfl_parser)
+[![Build Status](https://travis-ci.org/Teascade/bmfont_parser.svg?branch=0.1.1)](https://travis-ci.org/Teascade/sfl_parser)
 [![Docs](https://docs.rs/bmfont_parser/badge.svg)](https://docs.rs/bmfont_parser)
 [![Crates.io](https://img.shields.io/crates/v/bmfont_parser.svg)](https://crates.io/crates/bmfont_parser)
 
