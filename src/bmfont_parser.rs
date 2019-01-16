@@ -388,13 +388,13 @@ pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
                     )?;
                 }
                 "page" => {
-                    c.channel = result_or(
+                    c.page = result_or(
                         parser.expect_number(),
                         format!("Unable to parse char.{} value", keyword),
                     )?;
                 }
                 "chnl" => {
-                    c.xadvance = result_or(
+                    c.channel = result_or(
                         parser.expect_number(),
                         format!("Unable to parse char.{} value", keyword),
                     )?;

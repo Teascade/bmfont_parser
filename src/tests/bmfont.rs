@@ -47,7 +47,7 @@ fn character_amount() {
 }
 
 #[test]
-fn sfl_page_amount() {
+fn page_amount() {
     for_each_font(|font| {
         assert_eq!(font.pages.len(), 1);
     });

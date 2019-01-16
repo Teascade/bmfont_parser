@@ -37,3 +37,10 @@ fn xadvance() {
         assert_eq!(font.chars[&65].xadvance, 22);
     });
 }
+
+#[test]
+fn channel() {
+    for_each_font(|font| {
+        assert_eq!(font.chars[&65].channel, 15);
+    });
+}
