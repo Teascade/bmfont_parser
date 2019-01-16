@@ -313,7 +313,7 @@ pub(crate) fn load<T: Into<String>>(sfl_contents: T) -> Result<BMFont, Error> {
             yoffset: 0,
             xadvance: 0,
             page: 0,
-            channel: 0,
+            channel: 15,
         };
 
         parser.skip_whitespace();
