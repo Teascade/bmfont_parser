@@ -1,10 +1,12 @@
 # bmfont_parser
 
-[![Build Status](https://travis-ci.org/Teascade/bmfont_parser.svg?branch=0.1.1)](https://travis-ci.org/Teascade/sfl_parser)
+[![Build Status](https://travis-ci.org/Teascade/bmfont_parser.svg?branch=0.2.0)](https://travis-ci.org/Teascade/sfl_parser)
 [![Docs](https://docs.rs/bmfont_parser/badge.svg)](https://docs.rs/bmfont_parser)
 [![Crates.io](https://img.shields.io/crates/v/bmfont_parser.svg)](https://crates.io/crates/bmfont_parser)
 
 A lightweight and easy-to-use .sfl and .fnt file (bitmap font) parser made with Rust.
+
+Test fonts are generated with [Fontbuilder](https://github.com/Teascade/fontbuilder)
 
 ### How to use
 Documentation at [docs.rs][docs] or simply:
@@ -12,7 +14,7 @@ Documentation at [docs.rs][docs] or simply:
 1. Add the following to your dependencies:  
    ```toml
    [dependencies]
-   bmfont_parser="0.1"
+   bmfont_parser="0.2"
    ```
 2. To your Rust project add the following line:
    ```rust
